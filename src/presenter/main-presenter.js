@@ -2,16 +2,25 @@ import HeroView from '../view/hero-view';
 import {render} from '../framework/render';
 import MissionView from '../view/mission-view';
 import AdvantagesView from '../view/advantages-view';
+import FiltersPresenter from './filters-presenter';
 
 export default class MainPresenter {
   #container = null;
+
+  #productsModel = null;
+  #filtersModel = null;
+
+  #filtersPresenter = null;
 
   #heroComponent = new HeroView();
   #missionComponent = new MissionView();
   #advantagesComponent = new AdvantagesView();
 
-  constructor({container}) {
+  constructor({container, productsModel, filtersModel}) {
     this.#container = container;
+
+    this.#productsModel = productsModel;
+    this.#filtersModel = filtersModel;
   }
 
   init() {
@@ -26,6 +35,17 @@ export default class MainPresenter {
     this.#renderHero();
     this.#renderMission();
     this.#renderAdvantages();
+    this.#renderFilters();
+  }
+
+  #renderFilters() {
+    this.#filtersPresenter = new FiltersPresenter({
+      container: this.#container,
+      productsModel: this.#productsModel,
+      filtersModel: this.#filtersModel
+    });
+
+    this.#filtersPresenter.init();
   }
 
   #renderHero() {
