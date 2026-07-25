@@ -2,9 +2,12 @@
 import './vendor';
 import { ImageSlider } from './utils/image-slider';
 import { iosVhFix } from './utils/ios-vh-fix';
-import { modals, initModals } from './modals/init-modals';
+import { initModals } from './modals/init-modals';
 
 // Ваши импорты...
+import ProductsModel from './model/products-model';
+import ProductsApiService from './api-service/products-api-service';
+import {AUTHORIZATION, END_POINT} from './api-service/const';
 
 // Код для работы попапов, не удаляйте его
 window.addEventListener('DOMContentLoaded', () => {
@@ -19,17 +22,7 @@ window.addEventListener('DOMContentLoaded', () => {
     initModals();
   });
 
-  // Пример кода для открытия попапа
-  document
-    .querySelector('.element-which-is-open-popup')
-    .addEventListener('click', () => modals.open('popup-data-attr'));
+  const productsModel = new ProductsModel(new ProductsApiService(END_POINT, AUTHORIZATION));
 
-  // Код отработает, если разметка попапа уже отрисована в index.html
-
-  // Если вы хотите рисовать разметку попапа под каждое "открытие",
-  // то не забудьте перенесети в код addEventListener инициализацию слайдера
-
-  // ------------
-
-  // Ваш код...
+  productsModel.init();
 });
