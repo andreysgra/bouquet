@@ -3,6 +3,7 @@ import {render} from '../framework/render';
 import MissionView from '../view/mission-view';
 import AdvantagesView from '../view/advantages-view';
 import FiltersPresenter from './filters-presenter';
+import CataloguePresenter from './catalogue-presenter';
 
 export default class MainPresenter {
   #container = null;
@@ -11,6 +12,7 @@ export default class MainPresenter {
   #filtersModel = null;
 
   #filtersPresenter = null;
+  #cataloguePresenter = null;
 
   #heroComponent = new HeroView();
   #missionComponent = new MissionView();
@@ -36,6 +38,12 @@ export default class MainPresenter {
     this.#renderMission();
     this.#renderAdvantages();
     this.#renderFilters();
+
+    this.#cataloguePresenter = new CataloguePresenter({
+      container: this.#container
+    });
+
+    this.#cataloguePresenter.init();
   }
 
   #renderFilters() {
