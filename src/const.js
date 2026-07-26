@@ -37,3 +37,35 @@ export const FilterReasonType = {
     NAME: 'Любимой'
   }
 };
+
+export const FilterColorType = {
+  ALL: {
+    TYPE: 'all',
+    NAME: 'все цвета'
+  },
+  RED: {
+    TYPE: 'red',
+    SERVER_TYPE: 'red',
+    NAME: 'красный'
+  },
+  WHITE: {
+    TYPE: 'white',
+    SERVER_TYPE: 'white',
+    NAME: 'белый',
+  },
+  LILAC: {
+    TYPE: 'lilac',
+    SERVER_TYPE: 'violet',
+    NAME: 'сиреневый'
+  },
+  YELLOW: {
+    TYPE: 'yellow',
+    SERVER_TYPE: 'yellow',
+    NAME: 'жёлтый'
+  },
+  PINK: {
+    TYPE: 'pink',
+    SERVER_TYPE: 'pink',
+    NAME: 'розовый'
+  }
+};

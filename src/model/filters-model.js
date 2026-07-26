@@ -1,10 +1,15 @@
 import Observable from '../framework/observable';
-import {FilterReasonType} from '../const';
+import {FilterColorType, FilterReasonType} from '../const';
 
 export default class FiltersModel extends Observable {
   #filterReason = FilterReasonType.ALL.TYPE;
+  #filterColor = FilterColorType.ALL.TYPE;
 
   get filterReason() {
     return this.#filterReason;
+  }
+
+  get filterColor() {
+    return this.#filterColor;
   }
 }

@@ -1,6 +1,7 @@
-import {FilterReasonType} from '../const';
+import {FilterColorType, FilterReasonType} from '../const';
 import FilterReasonView from '../view/filter-reason-view';
 import {remove, render, replace} from '../framework/render';
+import FilterColorView from '../view/filter-color-view';
 
 export default class FiltersPresenter {
   #container = null;
@@ -9,6 +10,7 @@ export default class FiltersPresenter {
   #filtersModel = null;
 
   #filterReasonComponent = null;
+  #filterColorComponent = null;
 
   constructor({container, productsModel, filtersModel}) {
     this.#container = container;
@@ -18,6 +20,16 @@ export default class FiltersPresenter {
 
     this.#productsModel.addObserver(this.#modelEventHandler);
     this.#filtersModel.addObserver(this.#modelEventHandler);
+  }
+
+  get filtersColor() {
+    return Object.entries(FilterColorType)
+      .map(([, value]) => (
+        {
+          type: value.TYPE,
+          name: value.NAME
+        }
+      ));
   }
 
   get filtersReason() {
@@ -31,11 +43,11 @@ export default class FiltersPresenter {
   }
 
   init() {
-    const filtersReason = this.filtersReason;
     const currentFilterReasonComponent = this.#filterReasonComponent;
+    const currentFilterColorComponent = this.#filterColorComponent;
 
     this.#filterReasonComponent = new FilterReasonView({
-      filters: filtersReason,
+      filters: this.filtersReason,
       currentFilter: this.#filtersModel.filterReason
     });
 
@@ -44,6 +56,18 @@ export default class FiltersPresenter {
     } else {
       replace(this.#filterReasonComponent, currentFilterReasonComponent);
       remove(currentFilterReasonComponent);
+    }
+
+    this.#filterColorComponent = new FilterColorView({
+      filters: this.filtersColor,
+      currentFilter: this.#filtersModel.filterColor
+    });
+
+    if (currentFilterColorComponent === null) {
+      render(this.#filterColorComponent, this.#container);
+    } else {
+      replace(this.#filterColorComponent, currentFilterColorComponent);
+      remove(currentFilterColorComponent);
     }
   }
 
