@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 
-const createAdvantagesView = () => `
+const createAdvantagesTemplate = () => `
   <section class="advantages">
     <div class="container">
       <div class="advantages__wrapper">
@@ -39,6 +39,6 @@ const createAdvantagesView = () => `
 
 export default class AdvantagesView extends AbstractView {
   get template() {
-    return createAdvantagesView();
+    return createAdvantagesTemplate();
   }
 }

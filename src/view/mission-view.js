@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 
-const createMissionView = () => `
+const createMissionTemplate = () => `
   <section class="mission">
     <div class="container">
       <div class="mission__wrapper">
@@ -23,6 +23,6 @@ const createMissionView = () => `
 
 export default class MissionView extends AbstractView {
   get template() {
-    return createMissionView();
+    return createMissionTemplate();
   }
 }

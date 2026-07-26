@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 
-const createHeroView = () => `
+const createHeroTemplate = () => `
   <section class="hero">
     <div class="hero__wrapper">
       <div class="hero__background">
@@ -22,6 +22,6 @@ const createHeroView = () => `
 
 export default class HeroView extends AbstractView {
   get template() {
-    return createHeroView();
+    return createHeroTemplate();
   }
 }

@@ -13,8 +13,8 @@ export default class ProductsModel extends Observable {
     this.#productsApiService = productsApiService;
   }
 
-  get product() {
-    return this.#product;
+  get products() {
+    return this.#products;
   }
 
   async init() {
