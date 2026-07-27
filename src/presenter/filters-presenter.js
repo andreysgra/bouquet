@@ -60,7 +60,7 @@ export default class FiltersPresenter {
 
     this.#filterColorComponent = new FilterColorView({
       filters: this.filtersColor,
-      currentFilter: this.#filtersModel.filterColor
+      currentFilters: this.#filtersModel.filterColors
     });
 
     if (currentFilterColorComponent === null) {

@@ -1,6 +1,6 @@
 import AbstractView from '../framework/view/abstract-view';
 
-const createFilterItemTemplate = ({type, name}, currentFilter) => `
+const createFilterItemTemplate = ({type, name}, currentFilters) => `
   <div class="filter-field-img filter-color__form-field">
     <input
       class="filter-field-img__input filter-color__form-field"
@@ -8,7 +8,7 @@ const createFilterItemTemplate = ({type, name}, currentFilter) => `
       id="filter-colors-field-${type}"
       name="colors"
       value="color-${type}"
-       ${(currentFilter === type) ? 'checked' : ''}
+       ${(currentFilters.includes(type)) ? 'checked' : ''}
       data-filter-color="color-${type}"
     >
     <label class="filter-field-img__label" for="filter-colors-field-${type}">
@@ -23,13 +23,13 @@ const createFilterItemTemplate = ({type, name}, currentFilter) => `
   </div>
 `;
 
-const createFilterColorTemplate = (filters, currentFilter) => `
+const createFilterColorTemplate = (filters, currentFilters) => `
   <section class="filter-color">
     <div class="container">
       <h2 class="title title--h3 filter-color__title">Выберите основной цвет для букета</h2>
       <form class="filter-color__form" action="#" method="post">
         <div class="filter-color__form-fields" data-filter-color="filter">
-          ${filters.map((filter) => createFilterItemTemplate(filter, currentFilter)).join('')}
+          ${filters.map((filter) => createFilterItemTemplate(filter, currentFilters)).join('')}
         </div>
         <button class="visually-hidden" type="submit" tabindex="-1">применить фильтр</button>
       </form>
@@ -39,16 +39,16 @@ const createFilterColorTemplate = (filters, currentFilter) => `
 
 export default class FilterColorView extends AbstractView {
   #filters = null;
-  #currentFilter = null;
+  #currentFilters = null;
 
-  constructor({filters, currentFilter}) {
+  constructor({filters, currentFilters}) {
     super();
 
     this.#filters = filters;
-    this.#currentFilter = currentFilter;
+    this.#currentFilters = currentFilters;
   }
 
   get template() {
-    return createFilterColorTemplate(this.#filters, this.#currentFilter);
+    return createFilterColorTemplate(this.#filters, this.#currentFilters);
   }
 }

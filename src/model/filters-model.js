@@ -3,13 +3,13 @@ import {FilterColorType, FilterReasonType} from '../const';
 
 export default class FiltersModel extends Observable {
   #filterReason = FilterReasonType.ALL.TYPE;
-  #filterColor = FilterColorType.ALL.TYPE;
+  #filterColors = [FilterColorType.ALL.TYPE];
 
   get filterReason() {
     return this.#filterReason;
   }
 
-  get filterColor() {
-    return this.#filterColor;
+  get filterColors() {
+    return this.#filterColors;
   }
 }
