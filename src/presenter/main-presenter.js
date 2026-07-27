@@ -55,7 +55,9 @@ export default class MainPresenter {
     this.#renderFilters();
 
     this.#cataloguePresenter = new CataloguePresenter({
-      container: this.#container
+      container: this.#container,
+      productsModel: this.#productsModel,
+      filterModel: this.#filtersModel
     });
 
     this.#cataloguePresenter.init();
