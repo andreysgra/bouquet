@@ -69,3 +69,5 @@ export const FilterColorType = {
     NAME: 'розовый'
   }
 };
+
+export const DESCRIPTION_LENGTH = 140;
