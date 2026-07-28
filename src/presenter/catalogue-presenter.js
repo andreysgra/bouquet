@@ -10,6 +10,7 @@ import CatalogueButtonsView from '../view/catalogue-buttons-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import GoTopButtonView from '../view/go-top-button-view';
 import {PRODUCTS_COUNT_PER_STEP} from '../const';
+import CatalogueListEmptyView from '../view/catalogue-list-empty-view';
 
 export default class CataloguePresenter {
   #container = null;
@@ -29,6 +30,7 @@ export default class CataloguePresenter {
   #catalogueButtonsComponent = new CatalogueButtonsView();
   #showMoreButtonComponent = null;
   #goTopButtonComponent = new GoTopButtonView();
+  #catalogueListEmptyComponent = null;
 
   constructor({container, productsModel, filterModel}) {
     this.#container = container;
@@ -53,15 +55,18 @@ export default class CataloguePresenter {
   #renderBoard() {
     const products = this.products.slice(0, Math.min(this.products.length, this.#renderedProductsCount));
 
-    if (products.length === 0) {
-      return;
-    }
-
     this.#renderCatalogue();
     this.#renderCatalogueContainer();
     this.#renderCatalogueHeader();
     this.#renderCatalogueSort();
     this.#renderCatalogueList();
+
+    if (products.length === 0) {
+      this.#renderCatalogueListEmpty();
+
+      return;
+    }
+
     this.#renderCatalogueButtons();
     this.#renderProductCards(products);
   }
@@ -86,6 +91,11 @@ export default class CataloguePresenter {
 
   #renderCatalogueList() {
     render(this.#catalogueListComponent, this.#catalogueContainerComponent.element);
+  }
+
+  #renderCatalogueListEmpty() {
+    this.#catalogueListEmptyComponent = new CatalogueListEmptyView();
+    replace(this.#catalogueListEmptyComponent, this.#catalogueListComponent);
   }
 
   #renderCatalogueSort() {
