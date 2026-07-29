@@ -1,4 +1,4 @@
-import {FilterColorType, FilterReasonType} from '../const';
+import {FilterColorType, FilterReasonType, UpdateType} from '../const';
 import FilterReasonView from '../view/filter-reason-view';
 import {remove, render, replace} from '../framework/render';
 import FilterColorView from '../view/filter-color-view';
@@ -48,7 +48,8 @@ export default class FiltersPresenter {
 
     this.#filterReasonComponent = new FilterReasonView({
       filters: this.filtersReason,
-      currentFilter: this.#filtersModel.filterReason
+      currentFilter: this.#filtersModel.filterReason,
+      onFilterChange: this.#filterReasonChangeHandler
     });
 
     if (currentFilterReasonComponent === null) {
@@ -60,7 +61,8 @@ export default class FiltersPresenter {
 
     this.#filterColorComponent = new FilterColorView({
       filters: this.filtersColor,
-      currentFilters: this.#filtersModel.filterColors
+      currentFilters: this.#filtersModel.filterColors,
+      onFilterChange: this.#filterColorChangeHandler
     });
 
     if (currentFilterColorComponent === null) {
@@ -70,6 +72,18 @@ export default class FiltersPresenter {
       remove(currentFilterColorComponent);
     }
   }
+
+  #filterColorChangeHandler = (filterTypes) => {
+    this.#filtersModel.setFilterColors(UpdateType.MAJOR, filterTypes);
+  };
+
+  #filterReasonChangeHandler = (filterType) => {
+    if (this.#filtersModel.filterReason === filterType) {
+      return;
+    }
+
+    this.#filtersModel.setFilterReason(UpdateType.MAJOR, filterType);
+  };
 
   #modelEventHandler = () => {
     this.init();

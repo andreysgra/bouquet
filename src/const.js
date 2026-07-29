@@ -70,4 +70,11 @@ export const FilterColorType = {
   }
 };
 
+export const SortType = {
+  ASCENDING: 'ascending',
+  DESCENDING: 'descending',
+};
+
 export const DESCRIPTION_LENGTH = 140;
+
+export const PRODUCTS_COUNT_PER_STEP = 6;
