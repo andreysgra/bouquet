@@ -7,7 +7,7 @@ const createFilterItemTemplate = ({type, name}, currentFilters) => `
       type="checkbox"
       id="filter-colors-field-${type}"
       name="colors"
-      value="color-${type}"
+      value="${type}"
        ${(currentFilters.includes(type)) ? 'checked' : ''}
       data-filter-color="color-${type}"
     >
@@ -41,14 +41,31 @@ export default class FilterColorView extends AbstractView {
   #filters = null;
   #currentFilters = null;
 
-  constructor({filters, currentFilters}) {
+  #handleFilterChange = () => null;
+
+  constructor({filters, currentFilters, onFilterChange}) {
     super();
 
     this.#filters = filters;
     this.#currentFilters = currentFilters;
+
+    this.#handleFilterChange = onFilterChange;
+
+    this.element.addEventListener('click', this.#filterChangeHandler);
   }
 
   get template() {
     return createFilterColorTemplate(this.#filters, this.#currentFilters);
   }
+
+  #filterChangeHandler = (evt) => {
+    if (evt.target.closest('input[name="colors"]')) {
+      const filters = [];
+      const filterElements = this.element.querySelectorAll('input[name="colors"]:checked');
+
+      filterElements.forEach((filterElement) => filters.push(filterElement.value));
+
+      this.#handleFilterChange(filters);
+    }
+  };
 }

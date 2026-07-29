@@ -61,7 +61,8 @@ export default class FiltersPresenter {
 
     this.#filterColorComponent = new FilterColorView({
       filters: this.filtersColor,
-      currentFilters: this.#filtersModel.filterColors
+      currentFilters: this.#filtersModel.filterColors,
+      onFilterChange: this.#filterColorChangeHandler
     });
 
     if (currentFilterColorComponent === null) {
@@ -71,6 +72,10 @@ export default class FiltersPresenter {
       remove(currentFilterColorComponent);
     }
   }
+
+  #filterColorChangeHandler = (filterTypes) => {
+    this.#filtersModel.setFilterColors(UpdateType.MAJOR, filterTypes);
+  };
 
   #filterReasonChangeHandler = (filterType) => {
     if (this.#filtersModel.filterReason === filterType) {
