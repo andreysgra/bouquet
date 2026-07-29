@@ -7,7 +7,7 @@ const createFilterItemTemplate = ({type, name}, currentFilter) => `
       type="radio"
       id="filter-reason-field-${type}"
       name="reason"
-      value="for-${type}"
+      value="${type}"
       ${(currentFilter === type) ? 'checked' : ''}
     >
     <label class="filter-field-text__label" for="filter-reason-field-${type}">
@@ -34,14 +34,30 @@ export default class FilterReasonView extends AbstractView {
   #filters = null;
   #currentFilter = null;
 
-  constructor({filters, currentFilter}) {
+  #handleFilterChange = () => null;
+
+  constructor({filters, currentFilter, onFilterChange}) {
     super();
 
     this.#filters = filters;
     this.#currentFilter = currentFilter;
+
+    this.#handleFilterChange = onFilterChange;
+
+    this.element.addEventListener('click', this.#filterChangeHandler);
   }
 
   get template() {
     return createFilterReasonTemplate(this.#filters, this.#currentFilter);
   }
+
+  #filterChangeHandler = (evt) => {
+    const filterElement = evt.target.closest('input[name="reason"]');
+
+    if (filterElement) {
+      evt.preventDefault();
+
+      this.#handleFilterChange(filterElement.value);
+    }
+  };
 }

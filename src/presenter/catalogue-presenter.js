@@ -9,7 +9,7 @@ import {getFilterColor, getFilterReason} from '../utils/filter';
 import CatalogueButtonsView from '../view/catalogue-buttons-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import GoTopButtonView from '../view/go-top-button-view';
-import {PRODUCTS_COUNT_PER_STEP, SortType} from '../const';
+import {PRODUCTS_COUNT_PER_STEP, SortType, UpdateType} from '../const';
 import CatalogueListEmptyView from '../view/catalogue-list-empty-view';
 import {sortByPriceDescending, sortByPriseAscending} from '../utils/product';
 
@@ -39,6 +39,8 @@ export default class CataloguePresenter {
 
     this.#productsModel = productsModel;
     this.#filterModel = filterModel;
+
+    this.#filterModel.addObserver(this.#modelEventHandler);
   }
 
   get products() {
@@ -176,6 +178,19 @@ export default class CataloguePresenter {
 
     render(this.#showMoreButtonComponent, this.#catalogueButtonsComponent.element);
   }
+
+  #modelEventHandler = (updateType) => {
+    switch (updateType) {
+      case UpdateType.MAJOR:
+        this.#clearProductsBoard({
+          resetRenderedProductsCount: true,
+          resetSortType: true
+        });
+
+        this.#renderBoard();
+        break;
+    }
+  };
 
   #showMoreButtonClickHandler = () => {
     const productsCount = this.products.length;

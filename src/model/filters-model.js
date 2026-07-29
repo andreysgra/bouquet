@@ -12,4 +12,10 @@ export default class FiltersModel extends Observable {
   get filterColors() {
     return this.#filterColors;
   }
+
+  setFilterReason(updateType, update) {
+    this.#filterReason = update;
+
+    this._notify(updateType, update);
+  }
 }
