@@ -34,13 +34,17 @@ export default class CataloguePresenter {
   #goTopButtonComponent = new GoTopButtonView();
   #catalogueListEmptyComponent = null;
 
-  constructor({container, productsModel, filterModel}) {
+  #handleCardClick = () => null;
+
+  constructor({container, productsModel, filterModel, onCardClick}) {
     this.#container = container;
 
     this.#productsModel = productsModel;
     this.#filterModel = filterModel;
 
     this.#filterModel.addObserver(this.#modelEventHandler);
+
+    this.#handleCardClick = onCardClick;
   }
 
   get products() {
@@ -152,7 +156,8 @@ export default class CataloguePresenter {
 
   #renderProductCard(product) {
     const productPresenter = new ProductPresenter({
-      container: this.#catalogueListComponent.element
+      container: this.#catalogueListComponent.element,
+      onCardClick: this.#handleCardClick
     });
 
     productPresenter.init(product);
