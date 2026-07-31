@@ -8,8 +8,11 @@ export default class ProductPresenter {
 
   #productCardComponent = null;
 
-  constructor({container}) {
+  #handleCardClick = () => null;
+
+  constructor({container, onCardClick}) {
     this.#container = container;
+    this.#handleCardClick = onCardClick;
   }
 
   destroy() {
@@ -22,7 +25,8 @@ export default class ProductPresenter {
     const currentProductCardComponent = this.#productCardComponent;
 
     this.#productCardComponent = new ProductCardView({
-      product: this.#product
+      product: this.#product,
+      onCardClick: this.#cardClickHandler
     });
 
     if (currentProductCardComponent === null) {
@@ -32,4 +36,8 @@ export default class ProductPresenter {
       remove(currentProductCardComponent);
     }
   }
+
+  #cardClickHandler = () => {
+    this.#handleCardClick(this.#product);
+  };
 }

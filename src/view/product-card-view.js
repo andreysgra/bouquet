@@ -45,13 +45,25 @@ const createProductCardTemplate = (product) => {
 export default class ProductCardView extends AbstractView {
   #product = null;
 
-  constructor({product}) {
+  #handleCardClick = () => null;
+
+  constructor({product, onCardClick}) {
     super();
 
     this.#product = product;
+    this.#handleCardClick = onCardClick;
+
+    this.element.querySelector('.item-card__btn')
+      .addEventListener('click', this.#cardClickHandler);
   }
 
   get template() {
     return createProductCardTemplate(this.#product);
   }
+
+  #cardClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#handleCardClick(this.#product);
+  };
 }
