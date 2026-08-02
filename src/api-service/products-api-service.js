@@ -7,7 +7,8 @@ export default class ProductsApiService extends ApiService {
   }
 
   async getProduct(productId) {
-    return this._load({url: `products/${productId}`})
-      .then(ApiService.parseResponse);
+    const response = await this._load({url: `products/${productId}`});
+
+    return await ApiService.parseResponse(response);
   }
 }
