@@ -1,6 +1,7 @@
 import AbstractView from '../framework/view/abstract-view';
 import {getFormattedNumber, getShortDescription} from '../utils/common';
 import {FilterReasonType} from '../const';
+import classNames from 'classnames';
 
 const getCardLabel = (type) => {
   const [, label] = Object.entries(FilterReasonType)
@@ -9,12 +10,12 @@ const getCardLabel = (type) => {
   return label.NAME;
 };
 
-const createProductCardTemplate = (product) => {
+const createProductCardTemplate = (product, isFavorite) => {
   const {title, description, type, price, previewImage} = product;
 
   return `
     <li class="catalogue__item">
-      <div class="item-card">
+      <div class="${classNames('item-card', {'is-favorite': isFavorite})}">
         <button class="item-card__btn" type="button" data-open-modal="product-card" aria-label="посмотреть товар"></button>
         <p class="item-card__label">${getCardLabel(type)}</p>
         <div class="item-card__img-wrap">
@@ -44,26 +45,39 @@ const createProductCardTemplate = (product) => {
 
 export default class ProductCardView extends AbstractView {
   #product = null;
+  #isFavorite = false;
 
   #handleCardClick = () => null;
+  #handleFavoriteButtonClick = () => null;
 
-  constructor({product, onCardClick}) {
+  constructor({product, isFavorite, onCardClick, onFavoriteButtonClick}) {
     super();
 
     this.#product = product;
+    this.#isFavorite = isFavorite;
+
     this.#handleCardClick = onCardClick;
+    this.#favoriteButtonClickHandler = onFavoriteButtonClick;
 
     this.element.querySelector('.item-card__btn')
       .addEventListener('click', this.#cardClickHandler);
+    this.element.querySelector('.item-card__to-fav-btn')
+      .addEventListener('click', this.#favoriteButtonClickHandler);
   }
 
   get template() {
-    return createProductCardTemplate(this.#product);
+    return createProductCardTemplate(this.#product, this.#isFavorite);
   }
 
   #cardClickHandler = (evt) => {
     evt.preventDefault();
 
     this.#handleCardClick(this.#product);
+  };
+
+  #favoriteButtonClickHandler = (evt) => {
+    evt.preventDefault();
+
+    this.#handleFavoriteButtonClick();
   };
 }
