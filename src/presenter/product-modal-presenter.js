@@ -67,6 +67,10 @@ export default class ProductModalPresenter {
     this.#imageSlider.init();
   }
 
+  setAborting() {
+    this.#productModalDescriptionComponent.shakeControl();
+  }
+
   #favoriteButtonClickHandler = () => {
     const isFavorite = this.#cartModel.products.has(this.#product.id);
 

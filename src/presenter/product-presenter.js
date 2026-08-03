@@ -46,6 +46,10 @@ export default class ProductPresenter {
     }
   }
 
+  setAborting() {
+    this.#productCardComponent.shakeControl();
+  }
+
   #cardClickHandler = () => {
     this.#handleCardClick(this.#product);
   };

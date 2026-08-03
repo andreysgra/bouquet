@@ -39,6 +39,10 @@ export default class ProductModalDescriptionView extends AbstractView {
     return createDescriptionTemplate(this.#product, this.#isFavorite);
   }
 
+  shakeControl() {
+    this.shake.call({element: this.element});
+  }
+
   #favoriteButtonClickHandler = (evt) => {
     evt.preventDefault();
 

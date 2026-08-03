@@ -9,9 +9,10 @@ import {getFilterColor, getFilterReason} from '../utils/filter';
 import CatalogueButtonsView from '../view/catalogue-buttons-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import GoTopButtonView from '../view/go-top-button-view';
-import {PRODUCTS_COUNT_PER_STEP, SortType, UpdateType, UserAction} from '../const';
+import {PRODUCTS_COUNT_PER_STEP, SortType, TimeLimit, UpdateType, UserAction} from '../const';
 import CatalogueListEmptyView from '../view/catalogue-list-empty-view';
 import {sortByPriceDescending, sortByPriseAscending} from '../utils/product';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 export default class CataloguePresenter {
   #container = null;
@@ -24,6 +25,7 @@ export default class CataloguePresenter {
 
   #renderedProductsCount = PRODUCTS_COUNT_PER_STEP;
   #currentSortType = SortType.ASCENDING;
+  #uiBlocker = new UiBlocker({lowerLimit: TimeLimit.LOWER, upperLimit: TimeLimit.UPPER});
 
   #catalogueComponent = new CatalogueView();
   #catalogueContainerComponent = new CatalogueContainerView();
@@ -237,21 +239,29 @@ export default class CataloguePresenter {
   };
 
   #viewActionHandler = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.ADD_CART:
         try {
           await this.#cartModel.add(updateType, update);
         } catch (err) {
-          throw new Error('Can\'t add product to cart');
+          if (this.#productPresenters.has(update.id)) {
+            this.#productPresenters.get(update.id).setAborting();
+          }
         }
         break;
       case UserAction.DELETE_CART:
         try {
           await this.#cartModel.delete(updateType, update);
         } catch (err) {
-          throw new Error('Can\'t delete product from cart');
+          if (this.#productPresenters.has(update.id)) {
+            this.#productPresenters.get(update.id).setAborting();
+          }
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 }

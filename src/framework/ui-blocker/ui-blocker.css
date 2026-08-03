@@ -1,7 +1,7 @@
 .ui-blocker {
   display: none;
   place-content: center;
-  position: absolute;
+  position: fixed;
   top: 0;
   right: 0;
   bottom: 0;
@@ -21,6 +21,9 @@
              rotate 0.8s linear infinite;
   width: 65px;
   height: 65px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
 }
 
 .ui-blocker--on {

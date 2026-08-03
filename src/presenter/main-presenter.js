@@ -5,9 +5,10 @@ import AdvantagesView from '../view/advantages-view';
 import FiltersPresenter from './filters-presenter';
 import CataloguePresenter from './catalogue-presenter';
 import CatalogueLoadingView from '../view/catalogue-loading-view';
-import {UpdateType, UserAction} from '../const';
+import {TimeLimit, UpdateType, UserAction} from '../const';
 import ProductModalPresenter from './product-modal-presenter';
 import {modals} from '../modals/init-modals';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 export default class MainPresenter {
   #container = null;
@@ -23,6 +24,7 @@ export default class MainPresenter {
 
   #isLoading = true;
   #selectedProduct = null;
+  #uiBlocker = new UiBlocker({lowerLimit: TimeLimit.LOWER, upperLimit: TimeLimit.UPPER});
 
   #heroComponent = new HeroView();
   #missionComponent = new MissionView();
@@ -143,21 +145,25 @@ export default class MainPresenter {
   };
 
   #viewActionHandler = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
     switch (actionType) {
       case UserAction.ADD_CART:
         try {
           await this.#cartModel.add(updateType, update);
         } catch (err) {
-          throw new Error('Can\'t add product to cart');
+          this.#productModalPresenter.setAborting();
         }
         break;
       case UserAction.DELETE_CART:
         try {
           await this.#cartModel.delete(updateType, update);
         } catch (err) {
-          throw new Error('Can\'t delete product from cart');
+          this.#productModalPresenter.setAborting();
         }
         break;
     }
+
+    this.#uiBlocker.unblock();
   };
 }
