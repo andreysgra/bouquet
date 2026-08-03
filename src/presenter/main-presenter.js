@@ -5,10 +5,9 @@ import AdvantagesView from '../view/advantages-view';
 import FiltersPresenter from './filters-presenter';
 import CataloguePresenter from './catalogue-presenter';
 import CatalogueLoadingView from '../view/catalogue-loading-view';
-import {UpdateType} from '../const';
+import {UpdateType, UserAction} from '../const';
 import ProductModalPresenter from './product-modal-presenter';
 import {modals} from '../modals/init-modals';
-import {ImageSlider} from '../utils/image-slider';
 
 export default class MainPresenter {
   #container = null;
@@ -39,6 +38,7 @@ export default class MainPresenter {
     this.#cartModel = cartModel;
 
     this.#productsModel.addObserver(this.#modelEventHandler);
+    this.#cartModel.addObserver(this.#modelEventHandler);
   }
 
   init() {
@@ -54,7 +54,7 @@ export default class MainPresenter {
     }
 
     this.#selectedProduct = product;
-    this.#renderProductModal().then(() => new ImageSlider('.image-slider').init());
+    this.#renderProductModal().then(() => null);
   };
 
   #removeProductModal() {
@@ -119,18 +119,44 @@ export default class MainPresenter {
 
     if (this.#productModalPresenter === null) {
       this.#productModalPresenter = new ProductModalPresenter({
-        container: this.#modalContainer
+        container: this.#modalContainer,
+        cartModel: this.#cartModel,
+        onDataChange: this.#viewActionHandler
       });
     }
 
     this.#productModalPresenter.init(product);
   }
 
-  #modelEventHandler = async (updateType) => {
+  #modelEventHandler = async (updateType, data) => {
     switch (updateType) {
       case UpdateType.INIT:
         this.#isLoading = false;
         this.#renderBoard();
+        break;
+      case UpdateType.PATCH:
+        if (this.#productModalPresenter !== null) {
+          this.#productModalPresenter.init(data);
+        }
+        break;
+    }
+  };
+
+  #viewActionHandler = async (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.ADD_CART:
+        try {
+          await this.#cartModel.add(updateType, update);
+        } catch (err) {
+          throw new Error('Can\'t add product to cart');
+        }
+        break;
+      case UserAction.DELETE_CART:
+        try {
+          await this.#cartModel.delete(updateType, update);
+        } catch (err) {
+          throw new Error('Can\'t delete product from cart');
+        }
         break;
     }
   };
