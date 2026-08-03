@@ -27,21 +27,6 @@ export default class ProductsModel extends Observable {
     }
   }
 
-  async addToCart(updateType, update){
-    const index = this.#products.findIndex((product) => product.id === update);
-
-    if (index === -1) {
-      throw new Error('Can\'t add unexisting product to cart');
-    }
-
-    try {
-      await this.#productsApiService.addToCart(update);
-      this._notify(updateType, update);
-    } catch (err) {
-      throw new Error('Can\'t add product to cart');
-    }
-  }
-
   async getProduct(productId){
     try {
       this.#product = await this.#productsApiService.getProduct(productId);

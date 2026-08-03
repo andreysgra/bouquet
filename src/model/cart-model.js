@@ -16,6 +16,17 @@ export default class CartModel extends Observable {
     return this.#cart;
   }
 
+  async add(updateType, update){
+    try {
+      await this.#cartApiService.add(update.id);
+      this.#cart = await this.#cartApiService.cart;
+
+      this._notify(updateType, update);
+    } catch (err) {
+      throw new Error('Can\'t add product to cart');
+    }
+  }
+
   async init(){
     try {
       this.#cart = await this.#cartApiService.cart;
