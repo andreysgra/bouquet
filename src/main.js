@@ -6,6 +6,8 @@ import ProductsApiService from './api-service/products-api-service';
 import {AUTHORIZATION, END_POINT} from './api-service/const';
 import MainPresenter from './presenter/main-presenter';
 import FiltersModel from './model/filters-model';
+import CartModel from './model/cart-model';
+import CartApiService from './api-service/cart-api-service';
 
 window.addEventListener('DOMContentLoaded', () => {
   iosVhFix();
@@ -14,16 +16,29 @@ window.addEventListener('DOMContentLoaded', () => {
   const modalProductElement = document.querySelector('.modal-product');
 
   const productsModel = new ProductsModel(new ProductsApiService(END_POINT, AUTHORIZATION));
+  const cartModel = new CartModel(new CartApiService(END_POINT, AUTHORIZATION));
   const filtersModel = new FiltersModel();
 
   const mainPresenter = new MainPresenter({
     container: siteMainElement,
     modalContainer: modalProductElement,
     productsModel,
-    filtersModel
+    filtersModel,
+    cartModel
   });
 
   mainPresenter.init();
 
-  productsModel.init().then(() => initModals());
+  (async () => {
+    try {
+      await Promise.all([
+        cartModel.init(),
+        productsModel.init()
+      ]);
+
+      initModals();
+    } catch (err) {
+      return null;
+    }
+  })();
 });

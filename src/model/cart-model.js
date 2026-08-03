@@ -16,6 +16,12 @@ export default class CartModel extends Observable {
     return this.#cart;
   }
 
+  get products() {
+    const products = (this.cart.products) ? Object.entries(this.cart.products) : [];
+
+    return new Map(products);
+  }
+
   async add(updateType, update){
     try {
       await this.#cartApiService.add(update.id);

@@ -16,6 +16,7 @@ export default class MainPresenter {
 
   #productsModel = null;
   #filtersModel = null;
+  #cartModel = null;
 
   #filtersPresenter = null;
   #cataloguePresenter = null;
@@ -29,12 +30,13 @@ export default class MainPresenter {
   #advantagesComponent = new AdvantagesView();
   #catalogueLoadingComponent = new CatalogueLoadingView();
 
-  constructor({container, modalContainer, productsModel, filtersModel}) {
+  constructor({container, modalContainer, productsModel, filtersModel, cartModel}) {
     this.#container = container;
     this.#modalContainer = modalContainer;
 
     this.#productsModel = productsModel;
     this.#filtersModel = filtersModel;
+    this.#cartModel = cartModel;
 
     this.#productsModel.addObserver(this.#modelEventHandler);
   }
@@ -79,6 +81,7 @@ export default class MainPresenter {
     this.#cataloguePresenter = new CataloguePresenter({
       container: this.#container,
       productsModel: this.#productsModel,
+      cartModel: this.#cartModel,
       filterModel: this.#filtersModel,
       onCardClick: this.#addProductModal
     });

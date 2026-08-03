@@ -6,6 +6,12 @@ export const UpdateType = {
   PATCH: 'PATCH'
 };
 
+
+export const UserAction = {
+  ADD_CART: 'ADD_CART',
+  DELETE_CART: 'DELETE_CART'
+};
+
 export const FilterReasonType = {
   ALL: {
     TYPE: 'all',
