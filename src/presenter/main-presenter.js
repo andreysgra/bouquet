@@ -5,10 +5,10 @@ import AdvantagesView from '../view/advantages-view';
 import FiltersPresenter from './filters-presenter';
 import CataloguePresenter from './catalogue-presenter';
 import CatalogueLoadingView from '../view/catalogue-loading-view';
-import {UpdateType} from '../const';
+import {TimeLimit, UpdateType, UserAction} from '../const';
 import ProductModalPresenter from './product-modal-presenter';
 import {modals} from '../modals/init-modals';
-import {ImageSlider} from '../utils/image-slider';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 export default class MainPresenter {
   #container = null;
@@ -16,6 +16,7 @@ export default class MainPresenter {
 
   #productsModel = null;
   #filtersModel = null;
+  #cartModel = null;
 
   #filtersPresenter = null;
   #cataloguePresenter = null;
@@ -23,20 +24,23 @@ export default class MainPresenter {
 
   #isLoading = true;
   #selectedProduct = null;
+  #uiBlocker = new UiBlocker({lowerLimit: TimeLimit.LOWER, upperLimit: TimeLimit.UPPER});
 
   #heroComponent = new HeroView();
   #missionComponent = new MissionView();
   #advantagesComponent = new AdvantagesView();
   #catalogueLoadingComponent = new CatalogueLoadingView();
 
-  constructor({container, modalContainer, productsModel, filtersModel}) {
+  constructor({container, modalContainer, productsModel, filtersModel, cartModel}) {
     this.#container = container;
     this.#modalContainer = modalContainer;
 
     this.#productsModel = productsModel;
     this.#filtersModel = filtersModel;
+    this.#cartModel = cartModel;
 
     this.#productsModel.addObserver(this.#modelEventHandler);
+    this.#cartModel.addObserver(this.#modelEventHandler);
   }
 
   init() {
@@ -52,7 +56,7 @@ export default class MainPresenter {
     }
 
     this.#selectedProduct = product;
-    this.#renderProductModal().then(() => new ImageSlider('.image-slider').init());
+    this.#renderProductModal().then(() => null);
   };
 
   #removeProductModal() {
@@ -79,6 +83,7 @@ export default class MainPresenter {
     this.#cataloguePresenter = new CataloguePresenter({
       container: this.#container,
       productsModel: this.#productsModel,
+      cartModel: this.#cartModel,
       filterModel: this.#filtersModel,
       onCardClick: this.#addProductModal
     });
@@ -116,19 +121,49 @@ export default class MainPresenter {
 
     if (this.#productModalPresenter === null) {
       this.#productModalPresenter = new ProductModalPresenter({
-        container: this.#modalContainer
+        container: this.#modalContainer,
+        cartModel: this.#cartModel,
+        onDataChange: this.#viewActionHandler
       });
     }
 
     this.#productModalPresenter.init(product);
   }
 
-  #modelEventHandler = async (updateType) => {
+  #modelEventHandler = async (updateType, data) => {
     switch (updateType) {
       case UpdateType.INIT:
         this.#isLoading = false;
         this.#renderBoard();
         break;
+      case UpdateType.PATCH:
+        if (this.#productModalPresenter !== null) {
+          this.#productModalPresenter.init(data);
+        }
+        break;
     }
+  };
+
+  #viewActionHandler = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
+    switch (actionType) {
+      case UserAction.ADD_CART:
+        try {
+          await this.#cartModel.add(updateType, update);
+        } catch (err) {
+          this.#productModalPresenter.setAborting();
+        }
+        break;
+      case UserAction.DELETE_CART:
+        try {
+          await this.#cartModel.delete(updateType, update);
+        } catch (err) {
+          this.#productModalPresenter.setAborting();
+        }
+        break;
+    }
+
+    this.#uiBlocker.unblock();
   };
 }

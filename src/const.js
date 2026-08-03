@@ -6,6 +6,12 @@ export const UpdateType = {
   PATCH: 'PATCH'
 };
 
+
+export const UserAction = {
+  ADD_CART: 'ADD_CART',
+  DELETE_CART: 'DELETE_CART'
+};
+
 export const FilterReasonType = {
   ALL: {
     TYPE: 'all',
@@ -78,3 +84,8 @@ export const SortType = {
 export const DESCRIPTION_LENGTH = 140;
 
 export const PRODUCTS_COUNT_PER_STEP = 6;
+
+export const TimeLimit = {
+  LOWER: 350,
+  UPPER: 1000
+};

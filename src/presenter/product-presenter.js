@@ -1,18 +1,24 @@
 import ProductCardView from '../view/product-card-view';
 import {remove, render, replace} from '../framework/render';
+import {UpdateType, UserAction} from '../const';
 
 export default class ProductPresenter {
   #container = null;
+
+  #cartModel = null;
 
   #product = null;
 
   #productCardComponent = null;
 
   #handleCardClick = () => null;
+  #handleDataChange = () => null;
 
-  constructor({container, onCardClick}) {
+  constructor({container, cartModel, onCardClick, onDataChange}) {
     this.#container = container;
+    this.#cartModel = cartModel;
     this.#handleCardClick = onCardClick;
+    this.#handleDataChange = onDataChange;
   }
 
   destroy() {
@@ -22,11 +28,14 @@ export default class ProductPresenter {
   init(product) {
     this.#product = product;
 
+    const isFavorite = this.#cartModel.products.has(product.id);
     const currentProductCardComponent = this.#productCardComponent;
 
     this.#productCardComponent = new ProductCardView({
       product: this.#product,
-      onCardClick: this.#cardClickHandler
+      isFavorite,
+      onCardClick: this.#cardClickHandler,
+      onFavoriteButtonClick: this.#favoriteButtonClickHandler
     });
 
     if (currentProductCardComponent === null) {
@@ -37,7 +46,29 @@ export default class ProductPresenter {
     }
   }
 
+  setAborting() {
+    this.#productCardComponent.shakeControl();
+  }
+
   #cardClickHandler = () => {
     this.#handleCardClick(this.#product);
+  };
+
+  #favoriteButtonClickHandler = () => {
+    const isFavorite = this.#cartModel.products.has(this.#product.id);
+
+    if (isFavorite) {
+      this.#handleDataChange(
+        UserAction.DELETE_CART,
+        UpdateType.PATCH,
+        this.#product
+      );
+    } else {
+      this.#handleDataChange(
+        UserAction.ADD_CART,
+        UpdateType.PATCH,
+        this.#product
+      );
+    }
   };
 }

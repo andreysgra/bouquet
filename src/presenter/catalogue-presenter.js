@@ -9,9 +9,10 @@ import {getFilterColor, getFilterReason} from '../utils/filter';
 import CatalogueButtonsView from '../view/catalogue-buttons-view';
 import ShowMoreButtonView from '../view/show-more-button-view';
 import GoTopButtonView from '../view/go-top-button-view';
-import {PRODUCTS_COUNT_PER_STEP, SortType, UpdateType} from '../const';
+import {PRODUCTS_COUNT_PER_STEP, SortType, TimeLimit, UpdateType, UserAction} from '../const';
 import CatalogueListEmptyView from '../view/catalogue-list-empty-view';
 import {sortByPriceDescending, sortByPriseAscending} from '../utils/product';
+import UiBlocker from '../framework/ui-blocker/ui-blocker';
 
 export default class CataloguePresenter {
   #container = null;
@@ -20,9 +21,11 @@ export default class CataloguePresenter {
 
   #productsModel = null;
   #filterModel = null;
+  #cartModel = null;
 
   #renderedProductsCount = PRODUCTS_COUNT_PER_STEP;
   #currentSortType = SortType.ASCENDING;
+  #uiBlocker = new UiBlocker({lowerLimit: TimeLimit.LOWER, upperLimit: TimeLimit.UPPER});
 
   #catalogueComponent = new CatalogueView();
   #catalogueContainerComponent = new CatalogueContainerView();
@@ -36,13 +39,16 @@ export default class CataloguePresenter {
 
   #handleCardClick = () => null;
 
-  constructor({container, productsModel, filterModel, onCardClick}) {
+  constructor({container, productsModel, filterModel, cartModel, onCardClick}) {
     this.#container = container;
 
     this.#productsModel = productsModel;
     this.#filterModel = filterModel;
+    this.#cartModel = cartModel;
 
     this.#filterModel.addObserver(this.#modelEventHandler);
+    this.#cartModel.addObserver(this.#modelEventHandler);
+    this.#productsModel.addObserver(this.#modelEventHandler);
 
     this.#handleCardClick = onCardClick;
   }
@@ -157,7 +163,9 @@ export default class CataloguePresenter {
   #renderProductCard(product) {
     const productPresenter = new ProductPresenter({
       container: this.#catalogueListComponent.element,
-      onCardClick: this.#handleCardClick
+      cartModel: this.#cartModel,
+      onCardClick: this.#handleCardClick,
+      onDataChange: this.#viewActionHandler
     });
 
     productPresenter.init(product);
@@ -184,8 +192,13 @@ export default class CataloguePresenter {
     render(this.#showMoreButtonComponent, this.#catalogueButtonsComponent.element);
   }
 
-  #modelEventHandler = (updateType) => {
+  #modelEventHandler = (updateType, data) => {
     switch (updateType) {
+      case UpdateType.PATCH:
+        if (this.#productPresenters.has(data.id)) {
+          this.#productPresenters.get(data.id).init(data);
+        }
+        break;
       case UpdateType.MAJOR:
         this.#clearProductsBoard({
           resetRenderedProductsCount: true,
@@ -223,5 +236,32 @@ export default class CataloguePresenter {
     this.#clearProductsBoard({resetRenderedProductsCount: true});
     this.#renderCatalogueSort();
     this.#renderProductsBoard(products);
+  };
+
+  #viewActionHandler = async (actionType, updateType, update) => {
+    this.#uiBlocker.block();
+
+    switch (actionType) {
+      case UserAction.ADD_CART:
+        try {
+          await this.#cartModel.add(updateType, update);
+        } catch (err) {
+          if (this.#productPresenters.has(update.id)) {
+            this.#productPresenters.get(update.id).setAborting();
+          }
+        }
+        break;
+      case UserAction.DELETE_CART:
+        try {
+          await this.#cartModel.delete(updateType, update);
+        } catch (err) {
+          if (this.#productPresenters.has(update.id)) {
+            this.#productPresenters.get(update.id).setAborting();
+          }
+        }
+        break;
+    }
+
+    this.#uiBlocker.unblock();
   };
 }
