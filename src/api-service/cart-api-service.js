@@ -15,4 +15,11 @@ export default class CartApiService extends ApiService {
 
     return await ApiService.parseResponse(response);
   }
+
+  async delete(productId) {
+    await this._load({
+      url: `products/${productId}`,
+      method: Method.DELETE
+    });
+  }
 }

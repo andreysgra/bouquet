@@ -245,6 +245,13 @@ export default class CataloguePresenter {
           throw new Error('Can\'t add product to cart');
         }
         break;
+      case UserAction.DELETE_CART:
+        try {
+          await this.#cartModel.delete(updateType, update);
+        } catch (err) {
+          throw new Error('Can\'t delete product from cart');
+        }
+        break;
     }
   };
 }

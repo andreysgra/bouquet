@@ -33,6 +33,17 @@ export default class CartModel extends Observable {
     }
   }
 
+  async delete(updateType, update){
+    try {
+      await this.#cartApiService.delete(update.id);
+      this.#cart = await this.#cartApiService.cart;
+
+      this._notify(updateType, update);
+    } catch (err) {
+      throw new Error('Can\'t delete product from cart');
+    }
+  }
+
   async init(){
     try {
       this.#cart = await this.#cartApiService.cart;

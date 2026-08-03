@@ -51,10 +51,20 @@ export default class ProductPresenter {
   };
 
   #favoriteButtonClickHandler = () => {
-    this.#handleDataChange(
-      UserAction.ADD_CART,
-      UpdateType.PATCH,
-      this.#product
-    );
+    const isFavorite = this.#cartModel.products.has(this.#product.id);
+
+    if (isFavorite) {
+      this.#handleDataChange(
+        UserAction.DELETE_CART,
+        UpdateType.PATCH,
+        this.#product
+      );
+    } else {
+      this.#handleDataChange(
+        UserAction.ADD_CART,
+        UpdateType.PATCH,
+        this.#product
+      );
+    }
   };
 }
