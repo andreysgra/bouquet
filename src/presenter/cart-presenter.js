@@ -2,6 +2,8 @@ import CartPopupView from '../view/cart-popup-view';
 import {remove, render, RenderPosition} from '../framework/render';
 import CartPopupWrapperView from '../view/cart-popup-wrapper-view';
 import CartHeroView from '../view/cart-hero-view';
+import CartContainerView from '../view/cart-container-view';
+import CartCatalogueButtonView from '../view/cart-catalogue-button-view';
 
 export default class CartPresenter {
   #container = null;
@@ -9,21 +11,29 @@ export default class CartPresenter {
   #cartPopupComponent = new CartPopupView();
   #cartPopupWrapperComponent = new CartPopupWrapperView();
   #cartHeroComponent = null;
+  #cartContainerComponent = new CartContainerView();
+  #cartCatalogueButtonComponent = null;
 
   #handleCloseButtonClick = () => null;
+  #handleCatalogueButtonClick = () => null;
 
-  constructor({container, onCloseButtonClick}) {
+  constructor({container, onCloseButtonClick, onCatalogueButtonClick}) {
     this.#container = container;
 
     this.#handleCloseButtonClick = onCloseButtonClick;
+    this.#handleCatalogueButtonClick = onCatalogueButtonClick;
   }
 
   destroy() {
     remove(this.#cartHeroComponent);
+    remove(this.#cartContainerComponent);
+    remove(this.#cartCatalogueButtonComponent);
     remove(this.#cartPopupWrapperComponent);
     remove(this.#cartPopupComponent);
 
     this.#cartHeroComponent = null;
+    this.#cartCatalogueButtonComponent = null;
+    this.#cartContainerComponent = null;
     this.#cartPopupWrapperComponent = null;
     this.#cartPopupComponent = null;
   }
@@ -32,6 +42,20 @@ export default class CartPresenter {
     this.#renderCartPopup();
     this.#renderCartPopupWrapper();
     this.#renderCartHero();
+    this.#renderCartContainer();
+    this.#renderCartCatalogueButton();
+  }
+
+  #renderCartCatalogueButton() {
+    this.#cartCatalogueButtonComponent = new CartCatalogueButtonView({
+      onClick: this.#catalogueButtonClickHandler
+    });
+
+    render(this.#cartCatalogueButtonComponent, this.#cartContainerComponent.element);
+  }
+
+  #renderCartContainer() {
+    render(this.#cartContainerComponent, this.#cartPopupWrapperComponent.element);
   }
 
   #renderCartHero() {
@@ -49,6 +73,10 @@ export default class CartPresenter {
   #renderCartPopupWrapper() {
     render(this.#cartPopupWrapperComponent, this.#cartPopupComponent.element);
   }
+
+  #catalogueButtonClickHandler = () => {
+    this.#handleCatalogueButtonClick();
+  };
 
   #closeButtonClickHandler = () => {
     this.#handleCloseButtonClick();
