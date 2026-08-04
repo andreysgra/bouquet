@@ -69,9 +69,13 @@ export default class MainPresenter {
     this.#cataloguePresenter.destroy();
   }
 
-  #removeCart = () => {
+  #removeCart = ({resetFilters = false} = {}) => {
     this.#cartPresenter.destroy();
     this.#cartPresenter = null;
+
+    if (resetFilters) {
+      this.#filtersModel.resetFilters();
+    }
 
     this.#renderStaticBlocks();
     this.#renderBoard();
@@ -120,7 +124,8 @@ export default class MainPresenter {
   #renderCart = () => {
     this.#cartPresenter = new CartPresenter({
       container: this.#container,
-      onCloseButtonClick: this.#removeCart
+      onCloseButtonClick: this.#removeCart,
+      onCatalogueButtonClick: () => this.#removeCart({resetFilters: true})
     });
 
     this.#clearMain();

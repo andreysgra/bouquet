@@ -213,6 +213,9 @@ export default class CataloguePresenter {
           this.#productPresenters.get(data.id).init(data);
         }
         break;
+      case UpdateType.MINOR:
+        this.#currentSortType = SortType.ASCENDING;
+        break;
       case UpdateType.MAJOR:
         this.#clearProductsBoard({
           resetRenderedProductsCount: true,
