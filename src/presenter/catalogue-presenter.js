@@ -70,6 +70,21 @@ export default class CataloguePresenter {
     return filteredProducts;
   }
 
+  destroy() {
+    remove(this.#catalogueComponent);
+    remove(this.#catalogueContainerComponent);
+    remove(this.#catalogueHeaderComponent);
+    remove(this.#catalogueSortComponent);
+    remove(this.#catalogueListComponent);
+
+    this.#catalogueSortComponent = null;
+
+    this.#clearProductsBoard({
+      resetRenderedProductsCount: true,
+      resetSortType: true
+    });
+  }
+
   init() {
     this.#renderBoard();
   }

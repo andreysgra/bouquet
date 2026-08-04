@@ -8,7 +8,6 @@ import MainPresenter from './presenter/main-presenter';
 import FiltersModel from './model/filters-model';
 import CartModel from './model/cart-model';
 import CartApiService from './api-service/cart-api-service';
-import FavoriteCountPresenter from './presenter/favorite-count-presenter';
 
 window.addEventListener('DOMContentLoaded', () => {
   iosVhFix();
@@ -24,13 +23,9 @@ window.addEventListener('DOMContentLoaded', () => {
   const mainPresenter = new MainPresenter({
     container: siteMainElement,
     modalContainer: modalProductElement,
+    headerContainer: headerContainerElement,
     productsModel,
     filtersModel,
-    cartModel
-  });
-
-  const favoriteCountPresenter = new FavoriteCountPresenter({
-    container: headerContainerElement,
     cartModel
   });
 
@@ -43,7 +38,6 @@ window.addEventListener('DOMContentLoaded', () => {
         productsModel.init()
       ]);
 
-      favoriteCountPresenter.init();
       initModals();
     } catch (err) {
       return null;

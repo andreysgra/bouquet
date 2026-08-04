@@ -34,7 +34,7 @@ export default class FavoriteCountView extends AbstractView {
 
     this.#cart = cart;
 
-    this.#buttonClickHandler = onButtonClick;
+    this.#handleButtonClick = onButtonClick;
 
     this.element.querySelector('.header-count__btn')
       .addEventListener('click', this.#buttonClickHandler);
@@ -46,6 +46,7 @@ export default class FavoriteCountView extends AbstractView {
 
   #buttonClickHandler = (evt) => {
     evt.preventDefault();
+    evt.currentTarget.setAttribute('disabled', '');
 
     this.#handleButtonClick();
   };
