@@ -80,8 +80,7 @@ export default class CataloguePresenter {
     this.#catalogueSortComponent = null;
 
     this.#clearProductsBoard({
-      resetRenderedProductsCount: true,
-      resetSortType: true
+      resetRenderedProductsCount: true
     });
   }
 

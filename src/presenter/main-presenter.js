@@ -69,6 +69,14 @@ export default class MainPresenter {
     this.#cataloguePresenter.destroy();
   }
 
+  #removeCart = () => {
+    this.#cartPresenter.destroy();
+    this.#cartPresenter = null;
+
+    this.#renderStaticBlocks();
+    this.#renderBoard();
+  };
+
   #removeProductModal() {
     this.#productModalPresenter.destroy();
     this.#productModalPresenter = null;
@@ -96,20 +104,23 @@ export default class MainPresenter {
 
     this.#renderFilters();
 
-    this.#cataloguePresenter = new CataloguePresenter({
-      container: this.#container,
-      productsModel: this.#productsModel,
-      cartModel: this.#cartModel,
-      filterModel: this.#filtersModel,
-      onCardClick: this.#addProductModal
-    });
+    if (this.#cataloguePresenter === null) {
+      this.#cataloguePresenter = new CataloguePresenter({
+        container: this.#container,
+        productsModel: this.#productsModel,
+        cartModel: this.#cartModel,
+        filterModel: this.#filtersModel,
+        onCardClick: this.#addProductModal
+      });
+    }
 
     this.#cataloguePresenter.init();
   }
 
   #renderCart = () => {
     this.#cartPresenter = new CartPresenter({
-      container: this.#container
+      container: this.#container,
+      onCloseButtonClick: this.#removeCart
     });
 
     this.#clearMain();
