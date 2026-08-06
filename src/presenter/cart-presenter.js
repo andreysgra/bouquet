@@ -5,9 +5,15 @@ import CartHeroView from '../view/cart-hero-view';
 import CartContainerView from '../view/cart-container-view';
 import CartCatalogueButtonView from '../view/cart-catalogue-button-view';
 import CartCatalogueView from '../view/cart-catalogue-view';
+import ProductDeferredPresenter from './product-deferred-presenter';
 
 export default class CartPresenter {
   #container = null;
+
+  #productDeferredPresenters = new Map();
+
+  #productsModel = null;
+  #cartModel = null;
 
   #cartPopupComponent = new CartPopupView();
   #cartPopupWrapperComponent = new CartPopupWrapperView();
@@ -19,11 +25,20 @@ export default class CartPresenter {
   #handleCloseButtonClick = () => null;
   #handleCatalogueButtonClick = () => null;
 
-  constructor({container, onCloseButtonClick, onCatalogueButtonClick}) {
+  constructor({container, productsModel, cartModel, onCloseButtonClick, onCatalogueButtonClick}) {
     this.#container = container;
+
+    this.#productsModel = productsModel;
+    this.#cartModel = cartModel;
+
+    this.#cartModel.addObserver(this.#modelEventHandler);
 
     this.#handleCloseButtonClick = onCloseButtonClick;
     this.#handleCatalogueButtonClick = onCatalogueButtonClick;
+  }
+
+  get products() {
+    return this.#productsModel.products.filter((product) => this.#cartModel.products.has(product.id));
   }
 
   destroy() {
@@ -34,6 +49,8 @@ export default class CartPresenter {
     remove(this.#cartPopupWrapperComponent);
     remove(this.#cartPopupComponent);
 
+    this.#clearProductsDeferredBoard();
+
     this.#cartHeroComponent = null;
     this.#cartCatalogueButtonComponent = null;
     this.#cartCatalogueComponent = null;
@@ -43,12 +60,23 @@ export default class CartPresenter {
   }
 
   init() {
+    this.#renderBoard();
+  }
+
+  #clearProductsDeferredBoard() {
+    this.#productDeferredPresenters.forEach((presenter) => presenter.destroy());
+    this.#productDeferredPresenters.clear();
+  }
+
+  #renderBoard() {
+
     this.#renderCartPopup();
     this.#renderCartPopupWrapper();
     this.#renderCartHero();
     this.#renderCartContainer();
     this.#renderCartCatalogueButton();
     this.#renderCartCatalogue();
+    this.#renderProductsDeferredBoard(this.products);
   }
 
   #renderCartCatalogueButton() {
@@ -83,6 +111,24 @@ export default class CartPresenter {
     render(this.#cartPopupWrapperComponent, this.#cartPopupComponent.element);
   }
 
+  #renderProductDeferredCard(product) {
+    const productDeferredPresenter = new ProductDeferredPresenter({
+      container: this.#cartCatalogueComponent.element,
+      cartModel: this.#cartModel
+    });
+
+    productDeferredPresenter.init(product);
+    this.#productDeferredPresenters.set(product.id, productDeferredPresenter);
+  }
+
+  #renderProductDeferredCards(products) {
+    products.forEach((product) => this.#renderProductDeferredCard(product));
+  }
+
+  #renderProductsDeferredBoard(products) {
+    this.#renderProductDeferredCards(products);
+  }
+
   #catalogueButtonClickHandler = () => {
     this.#handleCatalogueButtonClick();
   };
@@ -90,4 +136,6 @@ export default class CartPresenter {
   #closeButtonClickHandler = () => {
     this.#handleCloseButtonClick();
   };
+
+  #modelEventHandler = () => {};
 }

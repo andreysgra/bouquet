@@ -124,6 +124,8 @@ export default class MainPresenter {
   #renderCart = () => {
     this.#cartPresenter = new CartPresenter({
       container: this.#container,
+      productsModel: this.#productsModel,
+      cartModel: this.#cartModel,
       onCloseButtonClick: this.#removeCart,
       onCatalogueButtonClick: () => this.#removeCart({resetFilters: true})
     });
