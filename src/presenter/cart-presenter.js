@@ -6,6 +6,7 @@ import CartContainerView from '../view/cart-container-view';
 import CartCatalogueButtonView from '../view/cart-catalogue-button-view';
 import CartCatalogueView from '../view/cart-catalogue-view';
 import ProductDeferredPresenter from './product-deferred-presenter';
+import CartClearButtonView from '../view/cart-clear-button-view';
 
 export default class CartPresenter {
   #container = null;
@@ -21,6 +22,7 @@ export default class CartPresenter {
   #cartContainerComponent = new CartContainerView();
   #cartCatalogueButtonComponent = null;
   #cartCatalogueComponent = new CartCatalogueView();
+  #cartClearButtonComponent = null;
 
   #handleCloseButtonClick = () => null;
   #handleCatalogueButtonClick = () => null;
@@ -45,6 +47,7 @@ export default class CartPresenter {
     remove(this.#cartHeroComponent);
     remove(this.#cartContainerComponent);
     remove(this.#cartCatalogueButtonComponent);
+    remove(this.#cartClearButtonComponent);
     remove(this.#cartCatalogueComponent);
     remove(this.#cartPopupWrapperComponent);
     remove(this.#cartPopupComponent);
@@ -53,6 +56,7 @@ export default class CartPresenter {
 
     this.#cartHeroComponent = null;
     this.#cartCatalogueButtonComponent = null;
+    this.#cartClearButtonComponent = null;
     this.#cartCatalogueComponent = null;
     this.#cartContainerComponent = null;
     this.#cartPopupWrapperComponent = null;
@@ -77,6 +81,7 @@ export default class CartPresenter {
     this.#renderCartCatalogueButton();
     this.#renderCartCatalogue();
     this.#renderProductsDeferredBoard(this.products);
+    this.#renderCartClearButton();
   }
 
   #renderCartCatalogueButton() {
@@ -93,6 +98,14 @@ export default class CartPresenter {
 
   #renderCartCatalogue() {
     render(this.#cartCatalogueComponent, this.#cartContainerComponent.element);
+  }
+
+  #renderCartClearButton() {
+    this.#cartClearButtonComponent = new CartClearButtonView({
+      onClick: this.#cartClearButtonClickHandler
+    });
+
+    render(this.#cartClearButtonComponent, this.#cartContainerComponent.element);
   }
 
   #renderCartHero() {
@@ -128,6 +141,9 @@ export default class CartPresenter {
   #renderProductsDeferredBoard(products) {
     this.#renderProductDeferredCards(products);
   }
+
+  #cartClearButtonClickHandler = () => {
+  };
 
   #catalogueButtonClickHandler = () => {
     this.#handleCatalogueButtonClick();
