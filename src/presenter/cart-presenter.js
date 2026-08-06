@@ -4,6 +4,7 @@ import CartPopupWrapperView from '../view/cart-popup-wrapper-view';
 import CartHeroView from '../view/cart-hero-view';
 import CartContainerView from '../view/cart-container-view';
 import CartCatalogueButtonView from '../view/cart-catalogue-button-view';
+import CartCatalogueView from '../view/cart-catalogue-view';
 
 export default class CartPresenter {
   #container = null;
@@ -13,6 +14,7 @@ export default class CartPresenter {
   #cartHeroComponent = null;
   #cartContainerComponent = new CartContainerView();
   #cartCatalogueButtonComponent = null;
+  #cartCatalogueComponent = new CartCatalogueView();
 
   #handleCloseButtonClick = () => null;
   #handleCatalogueButtonClick = () => null;
@@ -28,11 +30,13 @@ export default class CartPresenter {
     remove(this.#cartHeroComponent);
     remove(this.#cartContainerComponent);
     remove(this.#cartCatalogueButtonComponent);
+    remove(this.#cartCatalogueComponent);
     remove(this.#cartPopupWrapperComponent);
     remove(this.#cartPopupComponent);
 
     this.#cartHeroComponent = null;
     this.#cartCatalogueButtonComponent = null;
+    this.#cartCatalogueComponent = null;
     this.#cartContainerComponent = null;
     this.#cartPopupWrapperComponent = null;
     this.#cartPopupComponent = null;
@@ -44,6 +48,7 @@ export default class CartPresenter {
     this.#renderCartHero();
     this.#renderCartContainer();
     this.#renderCartCatalogueButton();
+    this.#renderCartCatalogue();
   }
 
   #renderCartCatalogueButton() {
@@ -56,6 +61,10 @@ export default class CartPresenter {
 
   #renderCartContainer() {
     render(this.#cartContainerComponent, this.#cartPopupWrapperComponent.element);
+  }
+
+  #renderCartCatalogue() {
+    render(this.#cartCatalogueComponent, this.#cartContainerComponent.element);
   }
 
   #renderCartHero() {
