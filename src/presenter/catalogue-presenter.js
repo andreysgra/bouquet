@@ -70,6 +70,20 @@ export default class CataloguePresenter {
     return filteredProducts;
   }
 
+  destroy() {
+    remove(this.#catalogueComponent);
+    remove(this.#catalogueContainerComponent);
+    remove(this.#catalogueHeaderComponent);
+    remove(this.#catalogueSortComponent);
+    remove(this.#catalogueListComponent);
+
+    this.#catalogueSortComponent = null;
+
+    this.#clearProductsBoard({
+      resetRenderedProductsCount: true
+    });
+  }
+
   init() {
     this.#renderBoard();
   }
@@ -198,6 +212,9 @@ export default class CataloguePresenter {
         if (this.#productPresenters.has(data.id)) {
           this.#productPresenters.get(data.id).init(data);
         }
+        break;
+      case UpdateType.MINOR:
+        this.#currentSortType = SortType.ASCENDING;
         break;
       case UpdateType.MAJOR:
         this.#clearProductsBoard({

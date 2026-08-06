@@ -8,11 +8,15 @@ export default class FavoriteCountPresenter {
 
   #favoriteCountComponent = null;
 
-  constructor({container, cartModel}) {
+  #handleButtonClick = () => null;
+
+  constructor({container, cartModel, onButtonClick}) {
     this.#container = container;
     this.#cartModel = cartModel;
 
     this.#cartModel.addObserver(this.#modelEventHandler);
+
+    this.#handleButtonClick = onButtonClick;
   }
 
   init() {
@@ -21,7 +25,7 @@ export default class FavoriteCountPresenter {
 
     this.#favoriteCountComponent = new FavoriteCountView({
       cart,
-      onButtonClick: this.#buttonClickHandler
+      onButtonClick: this.#handleButtonClick
     });
 
     if (currentFavoriteCountComponent === null) {
@@ -31,9 +35,6 @@ export default class FavoriteCountPresenter {
       remove(currentFavoriteCountComponent);
     }
   }
-
-  #buttonClickHandler = () => {
-  };
 
   #modelEventHandler = () => {
     this.init();

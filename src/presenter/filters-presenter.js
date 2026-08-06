@@ -42,6 +42,11 @@ export default class FiltersPresenter {
       ));
   }
 
+  destroy() {
+    remove(this.#filterReasonComponent);
+    remove(this.#filterColorComponent);
+  }
+
   init() {
     const currentFilterReasonComponent = this.#filterReasonComponent;
     const currentFilterColorComponent = this.#filterColorComponent;
