@@ -7,6 +7,7 @@ import CartCatalogueButtonView from '../view/cart-catalogue-button-view';
 import CartCatalogueView from '../view/cart-catalogue-view';
 import ProductDeferredPresenter from './product-deferred-presenter';
 import CartClearButtonView from '../view/cart-clear-button-view';
+import CartTotalView from '../view/cart-total-view';
 
 export default class CartPresenter {
   #container = null;
@@ -23,6 +24,7 @@ export default class CartPresenter {
   #cartCatalogueButtonComponent = null;
   #cartCatalogueComponent = new CartCatalogueView();
   #cartClearButtonComponent = null;
+  #cartTotalViewComponent = null;
 
   #handleCloseButtonClick = () => null;
   #handleCatalogueButtonClick = () => null;
@@ -48,6 +50,7 @@ export default class CartPresenter {
     remove(this.#cartContainerComponent);
     remove(this.#cartCatalogueButtonComponent);
     remove(this.#cartClearButtonComponent);
+    remove(this.#cartTotalViewComponent);
     remove(this.#cartCatalogueComponent);
     remove(this.#cartPopupWrapperComponent);
     remove(this.#cartPopupComponent);
@@ -57,6 +60,7 @@ export default class CartPresenter {
     this.#cartHeroComponent = null;
     this.#cartCatalogueButtonComponent = null;
     this.#cartClearButtonComponent = null;
+    this.#cartTotalViewComponent = null;
     this.#cartCatalogueComponent = null;
     this.#cartContainerComponent = null;
     this.#cartPopupWrapperComponent = null;
@@ -82,6 +86,7 @@ export default class CartPresenter {
     this.#renderCartCatalogue();
     this.#renderProductsDeferredBoard(this.products);
     this.#renderCartClearButton();
+    this.#renderCartTotal();
   }
 
   #renderCartCatalogueButton() {
@@ -132,6 +137,14 @@ export default class CartPresenter {
 
     productDeferredPresenter.init(product);
     this.#productDeferredPresenters.set(product.id, productDeferredPresenter);
+  }
+
+  #renderCartTotal() {
+    this.#cartTotalViewComponent = new CartTotalView({
+      cart: this.#cartModel.cart
+    });
+
+    render(this.#cartTotalViewComponent, this.#cartContainerComponent.element);
   }
 
   #renderProductDeferredCards(products) {
