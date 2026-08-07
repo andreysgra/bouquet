@@ -109,12 +109,16 @@ export default class CartPresenter {
   }
 
   #renderCartClearButton() {
-    this.#cartClearButtonComponent = new CartClearButtonView({
-      onClick: this.#cartClearButtonClickHandler
-    });
+    if (this.#cartClearButtonComponent === null) {
+      this.#cartClearButtonComponent = new CartClearButtonView({
+        onClick: this.#cartClearButtonClickHandler
+      });
+    }
 
     if (this.#cartModel.cart.productCount > 0) {
-      render(this.#cartClearButtonComponent, this.#cartContainerComponent.element);
+      render(this.#cartClearButtonComponent, this.#cartCatalogueComponent.element, RenderPosition.AFTEREND);
+    } else {
+      remove(this.#cartClearButtonComponent);
     }
   }
 
@@ -188,6 +192,7 @@ export default class CartPresenter {
       case UpdateType.MINOR:
         this.#clearProductsDeferredBoard();
         this.#renderProductsDeferredBoard();
+        this.#renderCartClearButton();
         this.#renderCartTotal();
         break;
     }
