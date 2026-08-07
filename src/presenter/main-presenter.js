@@ -193,8 +193,10 @@ export default class MainPresenter {
     switch (updateType) {
       case UpdateType.INIT:
         this.#isLoading = false;
-        this.#renderFavoriteCount();
         this.#renderBoard();
+        break;
+      case UpdateType.INIT_CART:
+        this.#renderFavoriteCount();
         break;
       case UpdateType.PATCH:
         if (this.#productModalPresenter !== null) {

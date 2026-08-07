@@ -92,6 +92,8 @@ export default class CartModel extends Observable {
       } else {
         this.#cart = cart;
       }
+
+      this._notify(UpdateType.INIT_CART, this.#cart);
     } catch (err) {
       this.#cart = {...emptyCart};
       this._notify(UpdateType.ERROR, this.#cart);

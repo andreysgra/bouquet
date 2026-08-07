@@ -1,6 +1,7 @@
 export const UpdateType = {
   ERROR: 'ERROR',
   INIT: 'INIT',
+  INIT_CART: 'INIT_CART',
   MAJOR: 'MAJOR',
   MINOR: 'MINOR',
   PATCH: 'PATCH'
