@@ -268,9 +268,9 @@ export default class CataloguePresenter {
           }
         }
         break;
-      case UserAction.DELETE_CART:
+      case UserAction.DELETE_PRODUCT:
         try {
-          await this.#cartModel.delete(updateType, update);
+          await this.#cartModel.deleteProduct(updateType, update);
         } catch (err) {
           if (this.#productPresenters.has(update.id)) {
             this.#productPresenters.get(update.id).setAborting();
