@@ -8,6 +8,7 @@ import CartCatalogueView from '../view/cart-catalogue-view';
 import ProductDeferredPresenter from './product-deferred-presenter';
 import CartClearButtonView from '../view/cart-clear-button-view';
 import CartTotalView from '../view/cart-total-view';
+import {UpdateType, UserAction} from '../const';
 
 export default class CartPresenter {
   #container = null;
@@ -65,6 +66,8 @@ export default class CartPresenter {
     this.#cartContainerComponent = null;
     this.#cartPopupWrapperComponent = null;
     this.#cartPopupComponent = null;
+
+    this.#cartModel.removeObserver(this.#modelEventHandler);
   }
 
   init() {
@@ -84,7 +87,7 @@ export default class CartPresenter {
     this.#renderCartContainer();
     this.#renderCartCatalogueButton();
     this.#renderCartCatalogue();
-    this.#renderProductsDeferredBoard(this.products);
+    this.#renderProductsDeferredBoard();
     this.#renderCartClearButton();
     this.#renderCartTotal();
   }
@@ -110,7 +113,9 @@ export default class CartPresenter {
       onClick: this.#cartClearButtonClickHandler
     });
 
-    render(this.#cartClearButtonComponent, this.#cartContainerComponent.element);
+    if (this.#cartModel.cart.productCount > 0) {
+      render(this.#cartClearButtonComponent, this.#cartContainerComponent.element);
+    }
   }
 
   #renderCartHero() {
@@ -132,7 +137,8 @@ export default class CartPresenter {
   #renderProductDeferredCard(product) {
     const productDeferredPresenter = new ProductDeferredPresenter({
       container: this.#cartCatalogueComponent.element,
-      cartModel: this.#cartModel
+      cartModel: this.#cartModel,
+      onDataChange: this.#viewActionHandler
     });
 
     productDeferredPresenter.init(product);
@@ -140,19 +146,23 @@ export default class CartPresenter {
   }
 
   #renderCartTotal() {
-    this.#cartTotalViewComponent = new CartTotalView({
-      cart: this.#cartModel.cart
-    });
+    if (this.#cartTotalViewComponent === null) {
+      this.#cartTotalViewComponent = new CartTotalView({
+        cart: this.#cartModel.cart
+      });
 
-    render(this.#cartTotalViewComponent, this.#cartContainerComponent.element);
+      render(this.#cartTotalViewComponent, this.#cartContainerComponent.element);
+    } else {
+      this.#cartTotalViewComponent.updateElement(this.#cartModel.cart);
+    }
   }
 
   #renderProductDeferredCards(products) {
     products.forEach((product) => this.#renderProductDeferredCard(product));
   }
 
-  #renderProductsDeferredBoard(products) {
-    this.#renderProductDeferredCards(products);
+  #renderProductsDeferredBoard() {
+    this.#renderProductDeferredCards(this.products);
   }
 
   #cartClearButtonClickHandler = () => {
@@ -166,5 +176,43 @@ export default class CartPresenter {
     this.#handleCloseButtonClick();
   };
 
-  #modelEventHandler = () => {};
+  #modelEventHandler = (updateType, data) => {
+    switch (updateType) {
+      case UpdateType.PATCH:
+        if (this.#productDeferredPresenters.has(data.id)) {
+          this.#productDeferredPresenters.get(data.id).init(data);
+        }
+
+        this.#renderCartTotal();
+        break;
+      case UpdateType.MINOR:
+        this.#clearProductsDeferredBoard();
+        this.#renderProductsDeferredBoard();
+        this.#renderCartTotal();
+        break;
+    }
+  };
+
+  #viewActionHandler = async (actionType, updateType, update) => {
+    switch (actionType) {
+      case UserAction.ADD_CART:
+        try {
+          await this.#cartModel.add(updateType, update);
+        } catch (err) {
+          if (this.#productDeferredPresenters.has(update.id)) {
+            this.#productDeferredPresenters.get(update.id).setAborting();
+          }
+        }
+        break;
+      case UserAction.DELETE_CART:
+        try {
+          await this.#cartModel.delete(updateType, update);
+        } catch (err) {
+          if (this.#productDeferredPresenters.has(update.id)) {
+            this.#productDeferredPresenters.get(update.id).setAborting();
+          }
+        }
+        break;
+    }
+  };
 }

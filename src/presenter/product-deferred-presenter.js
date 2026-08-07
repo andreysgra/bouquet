@@ -1,5 +1,6 @@
 import ProductDeferredCardView from '../view/product-deferred-card-view';
 import {remove, render, replace} from '../framework/render';
+import {UpdateType, UserAction} from '../const';
 
 export default class ProductDeferredPresenter {
   #container = null;
@@ -10,25 +11,32 @@ export default class ProductDeferredPresenter {
 
   #productDeferredCardComponent = null;
 
-  constructor({container, cartModel}) {
+  #handleDataChange = () => null;
+
+  constructor({container, cartModel, onDataChange}) {
     this.#container = container;
 
     this.#cartModel = cartModel;
+    this.#handleDataChange = onDataChange;
   }
 
   destroy() {
     remove(this.#productDeferredCardComponent);
+    this.#productDeferredCardComponent = null;
   }
 
   init(product) {
     this.#product = product;
 
-    const productCount = this.#cartModel.products.get(product.id);
+    const productCount = this.#cartModel.products.get(this.#product.id);
     const currentProductDeferredCardComponent = this.#productDeferredCardComponent;
 
     this.#productDeferredCardComponent = new ProductDeferredCardView({
       product: this.#product,
-      productCount
+      productCount,
+      onButtonDecreaseClick: this.#buttonDecreaseClickHandler,
+      onButtonIncreaseClick: this.#buttonIncreaseClickHandler,
+      onButtonDeleteClick: this.#buttonDeleteClickHandler
     });
 
     if (currentProductDeferredCardComponent === null) {
@@ -38,4 +46,29 @@ export default class ProductDeferredPresenter {
       remove(currentProductDeferredCardComponent);
     }
   }
+
+  setAborting() {
+    this.#productDeferredCardComponent.shakeControl();
+  }
+
+  #buttonDecreaseClickHandler = () => {
+    const productCount = this.#cartModel.products.get(this.#product.id);
+    const updateType = (productCount > 1) ? UpdateType.PATCH : UpdateType.MINOR;
+
+    this.#handleDataChange(
+      UserAction.DELETE_CART,
+      updateType,
+      this.#product
+    );
+  };
+
+  #buttonDeleteClickHandler = () => {};
+
+  #buttonIncreaseClickHandler = () => {
+    this.#handleDataChange(
+      UserAction.ADD_CART,
+      UpdateType.PATCH,
+      this.#product
+    );
+  };
 }
