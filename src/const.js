@@ -10,7 +10,8 @@ export const UpdateType = {
 export const UserAction = {
   ADD_CART: 'ADD_CART',
   DELETE_CART: 'DELETE_CART',
-  DELETE_PRODUCT: 'DELETE_PRODUCT'
+  DELETE_PRODUCT: 'DELETE_PRODUCT',
+  DELETE_ALL_PRODUCTS: 'DELETE_ALL_PRODUCTS'
 };
 
 export const FilterReasonType = {

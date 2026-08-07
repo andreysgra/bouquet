@@ -170,6 +170,8 @@ export default class CartPresenter {
   }
 
   #cartClearButtonClickHandler = () => {
+    this.#viewActionHandler(UserAction.DELETE_ALL_PRODUCTS, UpdateType.MINOR)
+      .then(() => null);
   };
 
   #catalogueButtonClickHandler = () => {
@@ -225,6 +227,13 @@ export default class CartPresenter {
           if (this.#productDeferredPresenters.has(update.id)) {
             this.#productDeferredPresenters.get(update.id).setAborting();
           }
+        }
+        break;
+      case UserAction.DELETE_ALL_PRODUCTS:
+        try {
+          await this.#cartModel.deleteAllProducts(updateType);
+        } catch (err) {
+          this.#cartClearButtonComponent.shake();
         }
         break;
     }
