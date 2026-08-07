@@ -76,7 +76,7 @@ export default class ProductModalPresenter {
 
     if (isFavorite) {
       this.#handleDataChange(
-        UserAction.DELETE_CART,
+        UserAction.DELETE_PRODUCT,
         UpdateType.PATCH,
         this.#product
       );

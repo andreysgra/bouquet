@@ -215,9 +215,9 @@ export default class MainPresenter {
           this.#productModalPresenter.setAborting();
         }
         break;
-      case UserAction.DELETE_CART:
+      case UserAction.DELETE_PRODUCT:
         try {
-          await this.#cartModel.delete(updateType, update);
+          await this.#cartModel.deleteProduct(updateType, update);
         } catch (err) {
           this.#productModalPresenter.setAborting();
         }
