@@ -59,10 +59,22 @@ export default class FilterColorView extends AbstractView {
   }
 
   #filterChangeHandler = (evt) => {
-    if (evt.target.closest('input[name="colors"]')) {
-      const filters = [];
-      const filterElements = this.element.querySelectorAll('input[name="colors"]:checked');
+    const element = evt.target.closest('input[name="colors"]');
 
+    if (element) {
+      const filters = [];
+      const allFilterElement = this.element.querySelector('input[value="all"]');
+      let filterElements = this.element.querySelectorAll('input[name="colors"]:checked');
+
+      if (element === allFilterElement || filterElements.length === 0) {
+        allFilterElement.checked = true;
+      }
+
+      if (allFilterElement.checked) {
+        filterElements.forEach((filterElement) => filterElement.removeAttribute('checked'));
+      }
+
+      filterElements = this.element.querySelectorAll('input[name="colors"]:checked');
       filterElements.forEach((filterElement) => filters.push(filterElement.value));
 
       this.#handleFilterChange(filters);
