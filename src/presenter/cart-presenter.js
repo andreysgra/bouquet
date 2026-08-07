@@ -218,6 +218,15 @@ export default class CartPresenter {
           }
         }
         break;
+      case UserAction.DELETE_PRODUCT:
+        try {
+          await this.#cartModel.deleteProduct(updateType, update);
+        } catch (err) {
+          if (this.#productDeferredPresenters.has(update.id)) {
+            this.#productDeferredPresenters.get(update.id).setAborting();
+          }
+        }
+        break;
     }
   };
 }

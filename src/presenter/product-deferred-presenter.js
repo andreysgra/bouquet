@@ -48,7 +48,7 @@ export default class ProductDeferredPresenter {
   }
 
   setAborting() {
-    this.#productDeferredCardComponent.shakeControl();
+    this.#productDeferredCardComponent.shake();
   }
 
   #buttonDecreaseClickHandler = () => {
@@ -62,7 +62,13 @@ export default class ProductDeferredPresenter {
     );
   };
 
-  #buttonDeleteClickHandler = () => {};
+  #buttonDeleteClickHandler = () => {
+    this.#handleDataChange(
+      UserAction.DELETE_PRODUCT,
+      UpdateType.MINOR,
+      this.#product
+    );
+  };
 
   #buttonIncreaseClickHandler = () => {
     this.#handleDataChange(

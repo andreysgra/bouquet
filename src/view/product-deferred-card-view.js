@@ -73,10 +73,6 @@ export default class ProductDeferredCardView extends AbstractView {
     return createProductDeferredCardComponent(this.#product, this.#productCount);
   }
 
-  shakeControl() {
-    this.shake.call({element: this.element.querySelector('.deferred-card__count')});
-  }
-
   #buttonDecreaseClickHandler = (evt) => {
     evt.preventDefault();
 
