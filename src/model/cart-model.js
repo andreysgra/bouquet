@@ -45,10 +45,22 @@ export default class CartModel extends Observable {
   }
 
   async init(){
+    const emptyCart = {
+      products: {},
+      productCount: 0,
+      sum: 0,
+    };
+
     try {
-      this.#cart = await this.#cartApiService.cart;
+      const cart = await this.#cartApiService.cart;
+
+      if (Object.keys(cart).length === 0) {
+        this.#cart = {...emptyCart};
+      } else {
+        this.#cart = cart;
+      }
     } catch (err) {
-      this.#cart = {};
+      this.#cart = {...emptyCart};
       this._notify(UpdateType.ERROR, this.#cart);
     }
   }
