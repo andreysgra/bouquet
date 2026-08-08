@@ -1,6 +1,7 @@
 export const UpdateType = {
   ERROR: 'ERROR',
   INIT: 'INIT',
+  INIT_CART: 'INIT_CART',
   MAJOR: 'MAJOR',
   MINOR: 'MINOR',
   PATCH: 'PATCH'
@@ -9,7 +10,9 @@ export const UpdateType = {
 
 export const UserAction = {
   ADD_CART: 'ADD_CART',
-  DELETE_CART: 'DELETE_CART'
+  DELETE_CART: 'DELETE_CART',
+  DELETE_PRODUCT: 'DELETE_PRODUCT',
+  DELETE_ALL_PRODUCTS: 'DELETE_ALL_PRODUCTS'
 };
 
 export const FilterReasonType = {

@@ -193,8 +193,10 @@ export default class MainPresenter {
     switch (updateType) {
       case UpdateType.INIT:
         this.#isLoading = false;
-        this.#renderFavoriteCount();
         this.#renderBoard();
+        break;
+      case UpdateType.INIT_CART:
+        this.#renderFavoriteCount();
         break;
       case UpdateType.PATCH:
         if (this.#productModalPresenter !== null) {
@@ -215,9 +217,9 @@ export default class MainPresenter {
           this.#productModalPresenter.setAborting();
         }
         break;
-      case UserAction.DELETE_CART:
+      case UserAction.DELETE_PRODUCT:
         try {
-          await this.#cartModel.delete(updateType, update);
+          await this.#cartModel.deleteProduct(updateType, update);
         } catch (err) {
           this.#productModalPresenter.setAborting();
         }

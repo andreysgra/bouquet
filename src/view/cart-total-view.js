@@ -1,4 +1,4 @@
-import AbstractView from '../framework/view/abstract-view';
+import AbstractStatefulView from '../framework/view/abstract-stateful-view';
 
 const createCartTotalTemplate = (cart) => {
   const {productCount, sum} = cart;
@@ -22,16 +22,16 @@ const createCartTotalTemplate = (cart) => {
   `;
 };
 
-export default class CartTotalView extends AbstractView {
-  #cart = null;
-
+export default class CartTotalView extends AbstractStatefulView {
   constructor({cart}) {
     super();
 
-    this.#cart = cart;
+    this._state = cart;
   }
 
   get template() {
-    return createCartTotalTemplate(this.#cart);
+    return createCartTotalTemplate(this._state);
   }
+
+  _restoreHandlers() {}
 }

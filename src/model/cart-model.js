@@ -29,7 +29,7 @@ export default class CartModel extends Observable {
 
       this._notify(updateType, update);
     } catch (err) {
-      throw new Error('Can\'t add product to cart');
+      throw new Error(`Can't add product ${update.id} to cart`);
     }
   }
 
@@ -40,15 +40,62 @@ export default class CartModel extends Observable {
 
       this._notify(updateType, update);
     } catch (err) {
-      throw new Error('Can\'t delete product from cart');
+      throw new Error(`Can't delete product ${update.id} from cart`);
     }
   }
 
+  async deleteProduct(updateType, update) {
+    const productCount = this.products.get(update.id);
+
+    for (let i = 0; i < productCount; i++) {
+      try {
+        await this.#cartApiService.delete(update.id);
+      } catch (err) {
+        throw new Error(`Can't delete product ${update.id} from cart`);
+      }
+    }
+
+    this.#cart = await this.#cartApiService.cart;
+    this._notify(updateType, null);
+  }
+
+  async deleteAllProducts(updateType){
+
+    for (const productId in this.cart.products) {
+      const productCount = this.products.get(productId);
+
+      for (let i = 0; i < productCount; i++) {
+        try {
+          await this.#cartApiService.delete(productId);
+        } catch (err) {
+          throw new Error(`Can't delete product ${productId} from cart`);
+        }
+      }
+    }
+
+    this.#cart = await this.#cartApiService.cart;
+    this._notify(updateType, null);
+  }
+
   async init(){
+    const emptyCart = {
+      products: {},
+      productCount: 0,
+      sum: 0,
+    };
+
     try {
-      this.#cart = await this.#cartApiService.cart;
+      const cart = await this.#cartApiService.cart;
+
+      if (Object.keys(cart).length === 0) {
+        this.#cart = {...emptyCart};
+      } else {
+        this.#cart = cart;
+      }
+
+      this._notify(UpdateType.INIT_CART, this.#cart);
     } catch (err) {
-      this.#cart = {};
+      this.#cart = {...emptyCart};
       this._notify(UpdateType.ERROR, this.#cart);
     }
   }

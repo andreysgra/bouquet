@@ -59,7 +59,7 @@ export default class ProductPresenter {
 
     if (isFavorite) {
       this.#handleDataChange(
-        UserAction.DELETE_CART,
+        UserAction.DELETE_PRODUCT,
         UpdateType.PATCH,
         this.#product
       );
