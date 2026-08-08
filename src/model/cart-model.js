@@ -55,8 +55,8 @@ export default class CartModel extends Observable {
       }
     }
 
-    this._notify(updateType, update);
     this.#cart = await this.#cartApiService.cart;
+    this._notify(updateType, null);
   }
 
   async deleteAllProducts(updateType){
